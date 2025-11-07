@@ -1,0 +1,30 @@
+# Build output
+bin/
+obj/
+
+# Visual Studio files
+*.user
+*.suo
+.vs/
+
+# Rider
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# NuGet
+*.nupkg
+
+# Rider caches
+.idea/
+
+# Local secrets
+secrets.json
+
+# Node
+node_modules/
