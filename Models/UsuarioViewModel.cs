@@ -16,7 +16,6 @@ public class UsuarioViewModel
     [LogGet.Models.Attributes.Cpf]
     public string CPF { get; set; } = string.Empty;
 
-    [Required]
     public string RG { get; set; } = string.Empty;
 
     [Display(Name = "Nome da mãe")]
