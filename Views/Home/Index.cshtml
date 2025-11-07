@@ -1,0 +1,53 @@
+﻿@model LogGet.Models.HomeDashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<section>
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Bem-vindo, @User.Identity?.Name!</h5>
+            <p class="card-text">Use o menu lateral para navegar pelas principais funcionalidades do LogGet.</p>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">Total de Entregas</h6>
+                    <h3 class="card-title">@Model.TotalEntregas</h3>
+                    <p class="card-text text-muted">Quantidade total de entregas registradas no sistema.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">Entregas sem motorista</h6>
+                    <h3 class="card-title">@Model.EntregasSemMotorista</h3>
+                    <p class="card-text text-muted">Entregas que ainda aguardam despacho.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">Motoristas cadastrados</h6>
+                    <h3 class="card-title">@Model.TotalMotoristas</h3>
+                    <p class="card-text text-muted">Total de motoristas no sistema.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">Usuários cadastrados</h6>
+                    <h3 class="card-title">@Model.TotalUsuarios</h3>
+                    <p class="card-text text-muted">Total de usuários do sistema.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

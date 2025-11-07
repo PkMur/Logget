@@ -1,0 +1,102 @@
+@{
+    ViewData["Title"] = "Novo Despacho";
+}
+
+<h2>Novo Despacho</h2>
+
+<div class="row">
+    <div class="col-md-8">
+        <form id="despachoForm" method="post" asp-action="CreateDespacho">
+            @Html.AntiForgeryToken()
+
+            <div class="mb-3">
+                <label for="motoristasSelect" class="form-label">Motorista</label>
+                <select id="motoristasSelect" name="motoristaId" class="form-select">
+                    <option value="">-- selecione --</option>
+                    @foreach (var m in (IEnumerable<LogGet.Models.MotoristaViewModel>)(ViewBag.Motoristas ?? Enumerable.Empty<LogGet.Models.MotoristaViewModel>()))
+                    {
+                        <option value="@m.Id">@m.Nome (@m.CPF)</option>
+                    }
+                </select>
+            </div>
+
+            <div class="input-group mb-3">
+                <input id="numeroInput" type="text" class="form-control" placeholder="Número da entrega (ex: ENT0001)" />
+                <button id="addBtn" type="button" class="btn btn-outline-secondary">Adicionar</button>
+            </div>
+
+            <div class="card mb-3">
+                <div class="card-header">Entregas adicionadas</div>
+                <ul id="entregasList" class="list-group list-group-flush"></ul>
+            </div>
+
+            <div id="hiddenEntregas"></div>
+
+            <button type="submit" class="btn btn-primary">Confirmar Despacho</button>
+            <a asp-action="Despacho" class="btn btn-secondary ms-2">Cancelar</a>
+        </form>
+    </div>
+    <div class="col-md-4">
+        <h5>Ajuda</h5>
+        <p>Adicione os números das entregas (por exemplo <strong>ENT0001</strong>) e selecione o motorista.</p>
+    </div>
+</div>
+
+<!-- Select2 (searchable select) -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script>
+    (function(){
+        var addBtn = document.getElementById('addBtn');
+        var numeroInput = document.getElementById('numeroInput');
+        var entregasList = document.getElementById('entregasList');
+        var hiddenEntregas = document.getElementById('hiddenEntregas');
+        var motoristaSelect = document.getElementById('motoristasSelect');
+
+        // Initialize Select2 on the motorista select (searchable)
+        if (window.jQuery && jQuery().select2) {
+            $(motoristaSelect).select2({ placeholder: '-- selecione --', width: '100%' });
+        }
+
+        addBtn.addEventListener('click', function(){
+            var num = numeroInput.value.trim();
+            if(!num) return;
+            // avoid duplicates
+            if ([...hiddenEntregas.querySelectorAll('input')].some(i=>i.value===num)){
+                numeroInput.value='';
+                return;
+            }
+
+            // Validate existence via AJAX
+            fetch('/Entregas/Exists?numero=' + encodeURIComponent(num))
+                .then(function(r){ return r.json(); })
+                .then(function(data){
+                    if (!data || data.exists !== true) {
+                        // show inline error
+                        alert('Entrega não encontrada: ' + num);
+                        return;
+                    }
+
+                    var li = document.createElement('li');
+                    li.className='list-group-item d-flex justify-content-between align-items-center';
+                    var span = document.createElement('span');
+                    span.textContent = num;
+                    var btn = document.createElement('button');
+                    btn.type='button'; btn.className='btn btn-sm btn-danger'; btn.textContent='Remover';
+
+                    var hidden = document.createElement('input');
+                    hidden.type='hidden'; hidden.name='entregas'; hidden.value=num;
+                    hiddenEntregas.appendChild(hidden);
+
+                    btn.addEventListener('click', function(){ li.remove(); hidden.remove(); });
+                    li.appendChild(span);
+                    li.appendChild(btn);
+                    entregasList.appendChild(li);
+
+                    numeroInput.value='';
+                })
+                .catch(function(){ alert('Erro ao validar entrega. Tente novamente.'); });
+        });
+    })();
+</script>

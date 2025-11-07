@@ -1,0 +1,47 @@
+@model IEnumerable<LogGet.Models.Entrega>
+
+@{
+    ViewData["Title"] = "Despacho";
+}
+
+<h2>Despacho</h2>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <form method="get" class="d-flex" action="@Url.Action("Despacho")">
+        <input type="text" name="q" value="@((string)ViewBag.Query ?? string.Empty)" class="form-control" placeholder="Buscar (pedido, remetente, destinatário)" style="width: 320px;" />
+        <button type="submit" class="btn btn-primary ms-2">Buscar</button>
+    </form>
+
+    <a asp-action="CreateDespacho" class="btn btn-success">Novo Despacho</a>
+    </div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Número da Entrega</th>
+            <th>Remetente</th>
+            <th>Destinatário</th>
+            <th>Data de Criação</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var e in Model)
+    {
+        <tr>
+            <td>
+                @if (!string.IsNullOrWhiteSpace(e.NumeroPedido))
+                {
+                    <a asp-action="Details" asp-route-numero="@e.NumeroPedido">@e.NumeroPedido</a>
+                }
+                else
+                {
+                    <span class="text-muted">(sem número)</span>
+                }
+            </td>
+            <td>@(string.IsNullOrWhiteSpace(e.RemetenteNome) ? "-" : e.RemetenteNome)</td>
+            <td>@(string.IsNullOrWhiteSpace(e.DestinatarioNome) ? "-" : e.DestinatarioNome)</td>
+            <td>@e.CriadoEm.ToLocalTime().ToString("g")</td>
+        </tr>
+    }
+    </tbody>
+</table>

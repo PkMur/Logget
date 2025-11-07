@@ -1,0 +1,55 @@
+@model LogGet.Models.Entrega
+
+@{
+    ViewData["Title"] = "Detalhes da Entrega";
+}
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-3">
+            <div class="card-header">Informações da Entrega</div>
+            <div class="card-body">
+                <p><strong>Número:</strong>
+                    @{
+                        if (!string.IsNullOrWhiteSpace(Model.NumeroPedido) && Model.NumeroPedido.Length > 3)
+                        {
+                            @($"Entrega {Model.NumeroPedido.Substring(3)}")
+                        }
+                        else if (!string.IsNullOrWhiteSpace(Model.NumeroPedido))
+                        {
+                            @Model.NumeroPedido
+                        }
+                        else
+                        {
+                            <span class="text-muted">(sem número)</span>
+                        }
+                    }
+                </p>
+                <p><strong>Destinatário:</strong> @Model.DestinatarioNome</p>
+                <p><strong>Remetente:</strong> @Model.RemetenteNome</p>
+                <p><strong>Status:</strong> @Model.Status</p>
+                <p><strong>Motorista:</strong> @(string.IsNullOrWhiteSpace(Model.MotoristaNome) ? "-" : Model.MotoristaNome)</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card mb-3">
+            <div class="card-header">Movimentações</div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    @foreach (var m in Model.Movimentacoes.OrderByDescending(x=>x.Data))
+                    {
+                        <li class="list-group-item">
+                            <div><strong>@m.Status</strong></div>
+                            <div class="text-muted small">@m.Data.ToLocalTime().ToString("g") - @m.Autor</div>
+                            @if(!string.IsNullOrWhiteSpace(m.Observacao)){
+                                <div class="small">@m.Observacao</div>
+                            }
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

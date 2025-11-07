@@ -1,0 +1,364 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - LogGet</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #ecf0f5;
+        }
+
+        .main-header {
+            background-color: #3c8dbc;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            width: 230px;
+        }
+
+        .logo-section i {
+            margin-right: 10px;
+        }
+
+        .top-nav {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex: 1;
+            margin-left: 30px;
+        }
+
+        .top-nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            padding: 5px 10px;
+        }
+
+        .top-nav a:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .user-info {
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-info i {
+            font-size: 16px;
+        }
+
+        .main-sidebar {
+            position: fixed;
+            top: 50px;
+            left: 0;
+            bottom: 0;
+            width: 230px;
+            background-color: #222d32;
+            overflow-y: auto;
+            z-index: 999;
+        }
+
+        .sidebar-search {
+            padding: 10px;
+            background-color: #1a2226;
+        }
+
+        .sidebar-search input {
+            width: 100%;
+            padding: 8px;
+            border: none;
+            border-radius: 3px;
+            background-color: #374850;
+            color: white;
+        }
+
+        .sidebar-search input::placeholder {
+            color: #8aa4af;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-menu li {
+            border-bottom: 1px solid #1a2226;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            color: #b8c7ce;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .sidebar-menu a:hover {
+            background-color: #1a2226;
+            color: white;
+        }
+
+        .sidebar-menu a i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-menu a .fa-angle-right {
+            margin-left: auto;
+            margin-right: 0;
+        }
+
+        .sidebar-menu form {
+            margin: 0;
+        }
+
+        .sidebar-menu form button {
+            background: none;
+            border: none;
+            width: 100%;
+            padding: 0;
+            cursor: pointer;
+        }
+
+        .sidebar-menu form button span {
+            display: flex;
+            align-items: center;
+            color: #b8c7ce;
+            padding: 12px 15px;
+        }
+
+        .sidebar-menu form button span:hover {
+            background-color: #1a2226;
+            color: white;
+        }
+
+        .content-wrapper {
+            margin-left: 230px;
+            margin-top: 50px;
+            min-height: calc(100vh - 50px);
+            padding: 30px;
+        }
+
+        /* Submenu styles for Cadastros */
+        .sidebar-submenu {
+            list-style: none;
+            padding-left: 0;
+            display: none;
+            background-color: #222d32;
+        }
+
+        .sidebar-submenu li a {
+            padding-left: 40px;
+            color: #b8c7ce;
+            display: block;
+            font-size: 13px;
+        }
+
+        .has-submenu.open > a .fa-angle-right {
+            transform: rotate(90deg);
+        }
+
+        .has-submenu.open .sidebar-submenu {
+            display: block;
+        }
+        @@media (max-width: 768px) {
+            .main-sidebar {
+                transform: translateX(-230px);
+            }
+
+            .content-wrapper {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <div class="logo-section">
+            <i class="fas fa-cube"></i>
+            <span>LogGet</span>
+        </div>
+
+        <div class="user-info">
+            <button id="userBtn" class="btn" style="background:none;border:none;color:white;padding:0;display:flex;align-items:center;gap:8px;">
+                <i class="far fa-user"></i>
+                <span>@(User.Identity?.Name ?? "Usuário")</span>
+            </button>
+        </div>
+    </header>
+
+    <aside class="main-sidebar">
+        <div class="sidebar-search">
+            <form method="get" asp-controller="Entregas" asp-action="Index" style="display:flex; gap:6px;">
+                <input type="text" name="q" placeholder="Número da entrega" />
+                <button type="submit" style="display:none"></button>
+            </form>
+        </div>
+
+        <ul class="sidebar-menu">
+            
+            <li class="has-submenu">
+                <a href="#" class="submenu-toggle">
+                    <i class="fas fa-truck"></i>
+                    <span>Entregas</span>
+                    <i class="fas fa-angle-right"></i>
+                </a>
+                <ul class="sidebar-submenu">
+                    <li>
+                        <a asp-controller="Entregas" asp-action="Create">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>Cadastro</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a asp-controller="Entregas" asp-action="Index">
+                            <i class="fas fa-list"></i>
+                            <span>Consulta</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a asp-controller="Entregas" asp-action="Despacho">
+                            <i class="fas fa-shipping-fast"></i>
+                            <span>Despacho</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="has-submenu">
+                <a href="#" class="submenu-toggle">
+                    <i class="fas fa-user"></i>
+                    <span>Usuários</span>
+                    <i class="fas fa-angle-right"></i>
+                </a>
+                <ul class="sidebar-submenu">
+                    <li>
+                        <a asp-controller="Usuarios" asp-action="Create">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>Cadastro</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a asp-controller="Usuarios" asp-action="Index">
+                            <i class="fas fa-list"></i>
+                            <span>Consulta</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <li class="has-submenu">
+                <a href="#" class="submenu-toggle">
+                    <i class="fas fa-id-card"></i>
+                    <span>Motoristas</span>
+                    <i class="fas fa-angle-right"></i>
+                </a>
+                <ul class="sidebar-submenu">
+                    <li>
+                        <a asp-controller="Motoristas" asp-action="Create">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>Cadastro</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a asp-controller="Motoristas" asp-action="Index">
+                            <i class="fas fa-list"></i>
+                            <span>Consulta</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            
+        </ul>
+    </aside>
+
+    <div class="content-wrapper">
+        @RenderBody()
+    </div>
+
+    <!-- Logout Modal -->
+    <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="logoutModalLabel">Sair</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Tem certeza que deseja sair da sua conta?
+                </div>
+                <div class="modal-footer">
+                    <form asp-controller="Account" asp-action="Logout" method="post" style="margin:0;">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-danger">Sair</button>
+                        <button type="button" class="btn btn-secondary ms-2" data-bs-dismiss="modal">Cancelar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Input masks for form fields -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/inputmask/5.0.8/inputmask.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/inputmask/5.0.8/jquery.inputmask.min.js"></script>
+    <script src="~/js/form-masks.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+    <script>
+        (function () {
+            // Toggle submenu open/close
+            document.querySelectorAll('.submenu-toggle').forEach(function (toggle) {
+                toggle.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    var li = this.parentElement;
+                    li.classList.toggle('open');
+                });
+            });
+
+            // User button opens logout modal
+            var userBtn = document.getElementById('userBtn');
+            if (userBtn) {
+                userBtn.addEventListener('click', function (e) {
+                    var logoutModal = new bootstrap.Modal(document.getElementById('logoutModal'));
+                    logoutModal.show();
+                });
+            }
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+@model LogGet.Models.EntregaCreateViewModel
+
+@{
+    ViewData["Title"] = "Nova Entrega";
+}
+
+<h2>Cadastro de Nova Entrega</h2>
+
+<form asp-action="Create" method="post">
+    @Html.AntiForgeryToken()
+
+    <h4>Destinatário</h4>
+    <div class="row g-3 mb-3">
+        <div class="col-md-6">
+            <label asp-for="DestinatarioNome" class="form-label">Nome</label>
+            <input asp-for="DestinatarioNome" class="form-control" />
+            <span asp-validation-for="DestinatarioNome" class="text-danger"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="DestinatarioDocumento" class="form-label">Documento</label>
+            <input asp-for="DestinatarioDocumento" class="form-control" />
+            <span asp-validation-for="DestinatarioDocumento" class="text-danger"></span>
+        </div>
+    </div>
+
+    <h5>Endereço</h5>
+    <div class="row g-3 mb-3">
+        <div class="col-md-4">
+            <label asp-for="EnderecoRua" class="form-label">Rua</label>
+            <input asp-for="EnderecoRua" class="form-control" />
+        </div>
+        <div class="col-md-2">
+            <label asp-for="EnderecoNumero" class="form-label">Número</label>
+            <input asp-for="EnderecoNumero" class="form-control" />
+        </div>
+        <div class="col-md-3">
+            <label asp-for="EnderecoComplemento" class="form-label">Complemento</label>
+            <input asp-for="EnderecoComplemento" class="form-control" />
+        </div>
+        <div class="col-md-3">
+            <label asp-for="EnderecoBairro" class="form-label">Bairro</label>
+            <input asp-for="EnderecoBairro" class="form-control" />
+        </div>
+        <div class="col-md-4 mt-2">
+            <label asp-for="EnderecoCidade" class="form-label">Cidade</label>
+            <input asp-for="EnderecoCidade" class="form-control" />
+        </div>
+    </div>
+
+    <h4>Remetente</h4>
+    <div class="row g-3 mb-3">
+        <div class="col-md-6">
+            <label asp-for="RemetenteNome" class="form-label">Nome</label>
+            <input asp-for="RemetenteNome" class="form-control" />
+        </div>
+        <div class="col-md-3">
+            <label asp-for="QuantidadeVolumes" class="form-label">Quantidade de volumes</label>
+            <input asp-for="QuantidadeVolumes" type="number" class="form-control" min="0" />
+        </div>
+        <div class="col-md-3">
+            <label asp-for="Peso" class="form-label">Peso (kg)</label>
+            <input asp-for="Peso" type="number" step="0.01" class="form-control" />
+        </div>
+    </div>
+
+    <div class="mt-4 d-flex gap-2">
+        <button type="submit" class="btn btn-primary px-4">Salvar</button>
+        <a asp-action="Index" class="btn btn-outline-secondary px-4">Cancelar</a>
+    </div>
+</form>
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+}
+
+
