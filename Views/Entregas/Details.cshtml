@@ -5,35 +5,70 @@
 }
 
 <div class="row">
-    <div class="col-md-8">
+    <div class="col-12">
         <div class="card mb-3">
             <div class="card-header">Informações da Entrega</div>
             <div class="card-body">
-                <p><strong>Número:</strong>
-                    @{
-                        if (!string.IsNullOrWhiteSpace(Model.NumeroPedido) && Model.NumeroPedido.Length > 3)
-                        {
-                            @($"Entrega {Model.NumeroPedido.Substring(3)}")
-                        }
-                        else if (!string.IsNullOrWhiteSpace(Model.NumeroPedido))
-                        {
-                            @Model.NumeroPedido
-                        }
-                        else
-                        {
-                            <span class="text-muted">(sem número)</span>
-                        }
-                    }
-                </p>
-                <p><strong>Destinatário:</strong> @Model.DestinatarioNome</p>
-                <p><strong>Remetente:</strong> @Model.RemetenteNome</p>
-                <p><strong>Status:</strong> @Model.Status</p>
-                <p><strong>Motorista:</strong> @(string.IsNullOrWhiteSpace(Model.MotoristaNome) ? "-" : Model.MotoristaNome)</p>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Entrega:</strong> @Model.NumeroPedido</p>
+                        <p><strong>Status:</strong> @Model.Status</p>
+                        <p><strong>Data de criação:</strong> @Model.CriadoEm.ToLocalTime().ToString("g")</p>
+                        <p><strong>Motorista:</strong> @(string.IsNullOrWhiteSpace(Model.MotoristaNome) ? "-" : Model.MotoristaNome)</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Quantidade de volumes:</strong> @Model.QuantidadeVolumes</p>
+                        <p><strong>Peso (kg):</strong> @Model.Peso</p>
+                    </div>
+                </div>
+                <hr />
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Destinatário</h6>
+                        <p><strong>Nome:</strong> @Model.DestinatarioNome</p>
+                        <p><strong>Documento:</strong> @(string.IsNullOrWhiteSpace(Model.DestinatarioDocumento) ? "-" : Model.DestinatarioDocumento)</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Remetente</h6>
+                        <p><strong>Nome:</strong> @Model.RemetenteNome</p>
+                    </div>
+                </div>
+                <hr />
+                <div class="row">
+                    <div class="col-12">
+                        <h6>Endereço de Entrega</h6>
+                        <p><strong>Rua:</strong> @Model.EnderecoRua</p>
+                        <p><strong>Número:</strong> @Model.EnderecoNumero</p>
+                        <p><strong>Complemento:</strong> @(string.IsNullOrWhiteSpace(Model.EnderecoComplemento) ? "-" : Model.EnderecoComplemento)</p>
+                        <p><strong>Bairro:</strong> @Model.EnderecoBairro</p>
+                        <p><strong>Cidade:</strong> @Model.EnderecoCidade</p>
+                    </div>
+                </div>
+                
+                @if (Model.Status != "Entregue")
+                {
+                    <hr />
+                    <div class="row">
+                        <div class="col-12">
+                            <a asp-action="Edit" asp-route-numero="@Model.NumeroPedido" class="btn btn-primary me-2">
+                                <i class="fas fa-edit"></i> Editar Entrega
+                            </a>
+                            <form asp-action="MarcarComoEntregue" asp-route-numero="@Model.NumeroPedido" method="post" style="display:inline;">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-success" onclick="return confirm('Confirma que a entrega foi finalizada?');">
+                                    <i class="fas fa-check"></i> Marcar como Entregue
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                }
             </div>
         </div>
     </div>
+</div>
 
-    <div class="col-md-4">
+<div class="row">
+    <div class="col-12">
         <div class="card mb-3">
             <div class="card-header">Movimentações</div>
             <div class="card-body p-0">
@@ -42,7 +77,13 @@
                     {
                         <li class="list-group-item">
                             <div><strong>@m.Status</strong></div>
-                            <div class="text-muted small">@m.Data.ToLocalTime().ToString("g") - @m.Autor</div>
+                            <div class="text-muted small">
+                                @m.Data.ToLocalTime().ToString("g")
+                                @if (!string.IsNullOrWhiteSpace(m.Autor))
+                                {
+                                    <span> - Usuário: @m.Autor</span>
+                                }
+                            </div>
                             @if(!string.IsNullOrWhiteSpace(m.Observacao)){
                                 <div class="small">@m.Observacao</div>
                             }

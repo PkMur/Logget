@@ -8,7 +8,7 @@ public class EntregaCreateViewModel
 
     // Destinatário
     [Display(Name = "Nome do destinatário")]
-    [Required]
+    [Required(ErrorMessage = "Nome do destinatário é obrigatório.")]
     public string DestinatarioNome { get; set; } = string.Empty;
 
     [Display(Name = "Documento do destinatário")]

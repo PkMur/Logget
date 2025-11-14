@@ -19,6 +19,7 @@
             <th>Nome</th>
             <th>Login</th>
             <th>E-mail</th>
+            <th>Ações</th>
         </tr>
     </thead>
     <tbody>
@@ -28,6 +29,23 @@
             <td>@u.Nome</td>
             <td>@u.Login</td>
             <td>@u.Email</td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@u.Id" class="btn btn-sm btn-outline-primary">Alterar</a>
+                @if (u.IsActive)
+                {
+                    <form asp-action="Deactivate" method="post" style="display:inline" onsubmit="return confirm('Desativar usuário?');">
+                        <input type="hidden" name="id" value="@u.Id" />
+                        <button type="submit" class="btn btn-sm btn-outline-danger ms-1">Desativar</button>
+                    </form>
+                }
+                else
+                {
+                    <form asp-action="Activate" method="post" style="display:inline" onsubmit="return confirm('Ativar usuário?');">
+                        <input type="hidden" name="id" value="@u.Id" />
+                        <button type="submit" class="btn btn-sm btn-outline-success ms-1">Ativar</button>
+                    </form>
+                }
+            </td>
         </tr>
     }
     </tbody>

@@ -39,7 +39,7 @@ public class EntregasController : Controller
         }
         _service.Add(new Entrega
         {
-            // NumeroPedido and CriadoEm are set by the service
+            // NumeroPedido e CriadoEm são definidos pelo serviço
             DestinatarioNome = model.DestinatarioNome,
             DestinatarioDocumento = model.DestinatarioDocumento,
             EnderecoRua = model.EnderecoRua,
@@ -56,6 +56,46 @@ public class EntregasController : Controller
     }
 
     [HttpGet]
+    public IActionResult Edit(string numero)
+    {
+        if (string.IsNullOrWhiteSpace(numero)) return NotFound();
+
+        // Normalizar número
+        var digits = new string(numero.Where(char.IsDigit).ToArray());
+        if (!string.IsNullOrWhiteSpace(digits) && digits.Length <= 4)
+        {
+            numero = digits.PadLeft(4, '0');
+        }
+
+        var entrega = _service.GetByNumeroPedido(numero);
+        if (entrega == null) return NotFound();
+
+        return View(entrega);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult Edit(Entrega model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        try
+        {
+            _service.Update(model);
+            TempData["SuccessMessage"] = "Entrega atualizada.";
+            return RedirectToAction("Details", new { numero = model.NumeroPedido });
+        }
+        catch (Exception ex)
+        {
+            ModelState.AddModelError(string.Empty, "Ocorreu um erro ao atualizar a entrega: " + ex.Message);
+            return View(model);
+        }
+    }
+
+    [HttpGet]
     public IActionResult Despacho()
     {
         var items = _service.ListWithoutMotorista();
@@ -66,7 +106,7 @@ public class EntregasController : Controller
     [HttpGet]
     public IActionResult CreateDespacho()
     {
-        // show form to create a new despacho: will need list of motoristas
+    // Exibir formulário para criar um novo despacho: será necessária a lista de motoristas
         var motoristas = HttpContext.RequestServices.GetService<LogGet.Services.IMotoristaService>()?.ListAll();
         ViewBag.Motoristas = motoristas ?? Enumerable.Empty<LogGet.Models.MotoristaViewModel>();
         return View();
@@ -91,9 +131,11 @@ public class EntregasController : Controller
         }
 
         var errors = new List<string>();
+        var usuarioNome = User.Identity?.Name ?? "Sistema";
+        
         foreach (var num in entregas.Distinct())
         {
-            if (!_service.AssignMotorista(num, motorista.Id, motorista.Nome, out var error))
+            if (!_service.AssignMotorista(num, motorista.Id, motorista.Nome, usuarioNome, out var error))
             {
                 if (!string.IsNullOrWhiteSpace(error)) errors.Add(error);
             }
@@ -104,7 +146,7 @@ public class EntregasController : Controller
             TempData["ErrorMessage"] = string.Join("; ", errors);
         }
 
-        TempData["SuccessMessage"] = "Despacho criado.";
+    TempData["SuccessMessage"] = "Expedição criada.";
         return RedirectToAction("Despacho");
     }
 
@@ -112,6 +154,14 @@ public class EntregasController : Controller
     public IActionResult Details(string numero)
     {
         if (string.IsNullOrWhiteSpace(numero)) return NotFound();
+
+        // Normalizar: extrair dígitos e preencher para 4 casas (ex.: 1 -> 0001)
+        var digits = new string(numero.Where(char.IsDigit).ToArray());
+        if (!string.IsNullOrWhiteSpace(digits) && digits.Length <= 4)
+        {
+            numero = digits.PadLeft(4, '0');
+        }
+
         var entrega = _service.GetByNumeroPedido(numero);
         if (entrega == null) return NotFound();
         return View(entrega);
@@ -123,6 +173,31 @@ public class EntregasController : Controller
         if (string.IsNullOrWhiteSpace(numero)) return Json(new { exists = false });
         var entrega = _service.GetByNumeroPedido(numero);
         return Json(new { exists = entrega != null });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult MarcarComoEntregue(string numero)
+    {
+        if (string.IsNullOrWhiteSpace(numero))
+        {
+            TempData["ErrorMessage"] = "Número da entrega não informado.";
+            return RedirectToAction("Index");
+        }
+
+        // Obter nome do usuário autenticado
+        var usuarioNome = User.Identity?.Name ?? "Sistema";
+
+        if (_service.MarcarComoEntregue(numero, usuarioNome, out var error))
+        {
+            TempData["SuccessMessage"] = "Entrega marcada como entregue.";
+        }
+        else
+        {
+            TempData["ErrorMessage"] = error ?? "Erro ao marcar entrega como entregue.";
+        }
+
+        return RedirectToAction("Details", new { numero });
     }
 }
 

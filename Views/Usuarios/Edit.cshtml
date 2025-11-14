@@ -1,0 +1,135 @@
+@model LogGet.Models.UsuarioViewModel
+
+@{
+    ViewData["Title"] = "Editar Usuário";
+}
+
+<div class="full-width-card card mt-4 shadow-sm">
+    <div class="card-body">
+        <h3 class="card-title mb-3">Editar Usuário</h3>
+
+        <form asp-action="Edit" method="post" novalidate>
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input asp-for="Nome" class="form-control" placeholder=" " />
+                        <label asp-for="Nome">Nome completo</label>
+                        <div class="invalid-feedback">
+                            <span asp-validation-for="Nome"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-floating">
+                        <input asp-for="CPF" class="form-control" placeholder=" " />
+                        <label asp-for="CPF">CPF</label>
+                        <div class="invalid-feedback">
+                            <span asp-validation-for="CPF"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-floating">
+                        <input asp-for="RG" class="form-control" placeholder=" " />
+                        <label asp-for="RG">RG</label>
+                        <div class="invalid-feedback">
+                            <span asp-validation-for="RG"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input asp-for="Email" class="form-control" placeholder=" " />
+                        <label asp-for="Email">E-mail</label>
+                        <div class="invalid-feedback">
+                            <span asp-validation-for="Email"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input asp-for="Telefone" class="form-control" placeholder=" " />
+                        <label asp-for="Telefone">Telefone</label>
+                        <div class="invalid-feedback">
+                            <span asp-validation-for="Telefone"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input asp-for="Login" class="form-control" placeholder=" " />
+                        <label asp-for="Login">Login</label>
+                        <div class="invalid-feedback">
+                            <span asp-validation-for="Login"></span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="mt-4 d-flex gap-2">
+                <button type="submit" class="btn btn-primary px-4">Salvar</button>
+                <a asp-action="Index" class="btn btn-outline-secondary px-4">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Seção para alterar senha -->
+<div class="full-width-card card mt-4 shadow-sm">
+    <div class="card-body">
+        <h3 class="card-title mb-3">Alterar Senha</h3>
+
+        <form asp-action="ChangePassword" asp-route-id="@Model.Id" method="post" novalidate>
+            @Html.AntiForgeryToken()
+
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="form-floating">
+                        <input type="password" name="SenhaAtual" class="form-control" placeholder=" " autocomplete="current-password" required />
+                        <label>Senha atual</label>
+                        <div class="invalid-feedback">
+                            Senha atual é obrigatória.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-floating">
+                        <input type="password" name="NovaSenha" id="NovaSenha" class="form-control" placeholder=" " autocomplete="new-password" required />
+                        <label>Nova senha</label>
+                        <div class="invalid-feedback">
+                            Nova senha é obrigatória.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-floating">
+                        <input type="password" name="ConfirmarSenha" class="form-control" placeholder=" " autocomplete="new-password" required />
+                        <label>Confirmar nova senha</label>
+                        <div class="invalid-feedback">
+                            Confirmação de senha é obrigatória.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary px-4">Alterar Senha</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+}

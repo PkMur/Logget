@@ -1,4 +1,5 @@
 using LogGet.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -35,7 +36,7 @@ public class MongoMotoristaService : IMotoristaService
         foreach (var doc in docs)
         {
             var m = new MotoristaViewModel();
-            // map id robustly
+            // mapear id de forma robusta
             if (doc.Contains("_id"))
             {
                 var idVal = doc["_id"];
@@ -70,6 +71,7 @@ public class MongoMotoristaService : IMotoristaService
             m.Veiculo = doc.GetValue("Veiculo", BsonString.Create(string.Empty)).AsString;
             m.Login = doc.GetValue("Login", BsonString.Create(string.Empty)).AsString;
             m.Senha = doc.GetValue("Senha", BsonString.Create(string.Empty)).AsString;
+            m.IsActive = doc.GetValue("IsActive", BsonBoolean.Create(true)).AsBoolean;
 
             result.Add(m);
         }
@@ -79,6 +81,14 @@ public class MongoMotoristaService : IMotoristaService
 
     public void Add(MotoristaViewModel motorista)
     {
+        // Hashear a senha antes de persistir
+        var hasher = new PasswordHasher<object>();
+        var senhaHash = string.Empty;
+        if (!string.IsNullOrEmpty(motorista.Senha))
+        {
+            senhaHash = hasher.HashPassword(null, motorista.Senha);
+        }
+
         var doc = new BsonDocument
         {
             { "Nome", motorista.Nome },
@@ -89,10 +99,38 @@ public class MongoMotoristaService : IMotoristaService
             { "NumeroCnh", motorista.NumeroCnh },
             { "Veiculo", motorista.Veiculo },
             { "Login", motorista.Login },
-            { "Senha", motorista.Senha }
+            { "Senha", senhaHash },
+            { "IsActive", motorista.IsActive }
         };
 
         _collection.InsertOne(doc);
+    }
+
+    public void Update(MotoristaViewModel motorista)
+    {
+        if (string.IsNullOrWhiteSpace(motorista.Id)) throw new InvalidOperationException("Id do motorista é obrigatório.");
+
+        var filter = Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(motorista.Id));
+        var update = new List<UpdateDefinition<BsonDocument>>
+        {
+            Builders<BsonDocument>.Update.Set("Nome", motorista.Nome),
+            Builders<BsonDocument>.Update.Set("CPF", motorista.CPF),
+            Builders<BsonDocument>.Update.Set("RG", motorista.RG),
+            Builders<BsonDocument>.Update.Set("Email", motorista.Email),
+            Builders<BsonDocument>.Update.Set("TipoHabilitacao", motorista.TipoHabilitacao),
+            Builders<BsonDocument>.Update.Set("NumeroCnh", motorista.NumeroCnh),
+            Builders<BsonDocument>.Update.Set("Veiculo", motorista.Veiculo),
+            Builders<BsonDocument>.Update.Set("Login", motorista.Login),
+            Builders<BsonDocument>.Update.Set("IsActive", motorista.IsActive)
+        };
+
+        if (!string.IsNullOrEmpty(motorista.Senha))
+        {
+            update.Add(Builders<BsonDocument>.Update.Set("Senha", motorista.Senha));
+        }
+
+        var combined = Builders<BsonDocument>.Update.Combine(update);
+        _collection.UpdateOne(filter, combined);
     }
 
     public bool ExistsByCpf(string cpf)
@@ -111,5 +149,32 @@ public class MongoMotoristaService : IMotoristaService
         }
 
         return false;
+    }
+
+    public bool ChangePassword(string id, string senhaAtual, string novaSenha)
+    {
+        if (string.IsNullOrWhiteSpace(id)) throw new InvalidOperationException("Id do motorista é obrigatório.");
+
+        // Buscar motorista
+        var filter = Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(id));
+        var doc = _collection.Find(filter).FirstOrDefault();
+        if (doc is null) return false;
+
+        // Verificar senha atual
+        var senhaArmazenada = doc.GetValue("Senha", BsonString.Create(string.Empty)).AsString;
+        var hasher = new PasswordHasher<object>();
+        var verificationResult = hasher.VerifyHashedPassword(null, senhaArmazenada, senhaAtual);
+        
+        if (verificationResult == PasswordVerificationResult.Failed)
+        {
+            return false; // Senha atual incorreta
+        }
+
+        // Hashear nova senha e atualizar
+        var novaSenhaHash = hasher.HashPassword(null, novaSenha);
+        var update = Builders<BsonDocument>.Update.Set("Senha", novaSenhaHash);
+        _collection.UpdateOne(filter, update);
+
+        return true;
     }
 }

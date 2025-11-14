@@ -1,0 +1,147 @@
+@model LogGet.Models.Entrega
+
+@{
+    ViewData["Title"] = "Editar Entrega";
+}
+
+<div class="full-width-card card mt-4 shadow-sm">
+    <div class="card-body">
+        <h3 class="card-title mb-3">Editar Entrega @Model.NumeroPedido</h3>
+
+        <form asp-action="Edit" method="post" novalidate>
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="NumeroPedido" />
+            <input type="hidden" asp-for="CriadoEm" />
+            <input type="hidden" asp-for="Status" />
+            <input type="hidden" asp-for="MotoristaId" />
+            <input type="hidden" asp-for="MotoristaNome" />
+
+            <div class="row g-3">
+                <!-- Destinatário -->
+                <div class="col-12">
+                    <h5 class="border-bottom pb-2 mb-3">Destinatário</h5>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input asp-for="DestinatarioNome" class="form-control" placeholder=" " />
+                        <label asp-for="DestinatarioNome">Nome do destinatário</label>
+                        <div class="invalid-feedback">
+                            <span asp-validation-for="DestinatarioNome"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input asp-for="DestinatarioDocumento" class="form-control" placeholder=" " />
+                        <label asp-for="DestinatarioDocumento">Documento do destinatário</label>
+                        <div class="invalid-feedback">
+                            <span asp-validation-for="DestinatarioDocumento"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Endereço -->
+                <div class="col-12 mt-4">
+                    <h5 class="border-bottom pb-2 mb-3">Endereço de Entrega</h5>
+                </div>
+
+                <div class="col-md-8">
+                    <div class="form-floating">
+                        <input asp-for="EnderecoRua" class="form-control" placeholder=" " />
+                        <label asp-for="EnderecoRua">Rua</label>
+                        <div class="invalid-feedback">
+                            <span asp-validation-for="EnderecoRua"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-floating">
+                        <input asp-for="EnderecoNumero" class="form-control" placeholder=" " />
+                        <label asp-for="EnderecoNumero">Número</label>
+                        <div class="invalid-feedback">
+                            <span asp-validation-for="EnderecoNumero"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-floating">
+                        <input asp-for="EnderecoComplemento" class="form-control" placeholder=" " />
+                        <label asp-for="EnderecoComplemento">Complemento</label>
+                        <div class="invalid-feedback">
+                            <span asp-validation-for="EnderecoComplemento"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-floating">
+                        <input asp-for="EnderecoBairro" class="form-control" placeholder=" " />
+                        <label asp-for="EnderecoBairro">Bairro</label>
+                        <div class="invalid-feedback">
+                            <span asp-validation-for="EnderecoBairro"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-floating">
+                        <input asp-for="EnderecoCidade" class="form-control" placeholder=" " />
+                        <label asp-for="EnderecoCidade">Cidade</label>
+                        <div class="invalid-feedback">
+                            <span asp-validation-for="EnderecoCidade"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Remetente e Detalhes -->
+                <div class="col-12 mt-4">
+                    <h5 class="border-bottom pb-2 mb-3">Remetente e Detalhes</h5>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input asp-for="RemetenteNome" class="form-control" placeholder=" " />
+                        <label asp-for="RemetenteNome">Nome do remetente</label>
+                        <div class="invalid-feedback">
+                            <span asp-validation-for="RemetenteNome"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="form-floating">
+                        <input asp-for="QuantidadeVolumes" type="number" class="form-control" placeholder=" " />
+                        <label asp-for="QuantidadeVolumes">Quantidade de volumes</label>
+                        <div class="invalid-feedback">
+                            <span asp-validation-for="QuantidadeVolumes"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="form-floating">
+                        <input asp-for="Peso" type="number" step="0.01" class="form-control" placeholder=" " />
+                        <label asp-for="Peso">Peso (kg)</label>
+                        <div class="invalid-feedback">
+                            <span asp-validation-for="Peso"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4 d-flex gap-2">
+                <button type="submit" class="btn btn-primary px-4">Salvar</button>
+                <a asp-action="Details" asp-route-numero="@Model.NumeroPedido" class="btn btn-outline-secondary px-4">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+}

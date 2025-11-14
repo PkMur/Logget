@@ -11,7 +11,7 @@ public class Entrega
     public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
 
     [Display(Name = "Número do Pedido")]
-    [Required]
+    [Required(ErrorMessage = "Número do pedido é obrigatório.")]
     public string NumeroPedido { get; set; } = string.Empty;
 
     // Destinatário

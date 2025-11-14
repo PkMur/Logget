@@ -19,6 +19,8 @@
             <th>Nome</th>
             <th>CPF</th>
             <th>Veículo</th>
+            <th>Status</th>
+            <th>Ações</th>
         </tr>
     </thead>
     <tbody>
@@ -28,6 +30,33 @@
             <td>@m.Nome</td>
             <td>@m.CPF</td>
             <td>@m.Veiculo</td>
+            <td>
+                @if (m.IsActive)
+                {
+                    <span class="badge bg-success">Ativo</span>
+                }
+                else
+                {
+                    <span class="badge bg-secondary">Inativo</span>
+                }
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@m.Id" class="btn btn-sm btn-outline-primary">Alterar</a>
+                @if (m.IsActive)
+                {
+                    <form asp-action="Deactivate" asp-route-id="@m.Id" method="post" style="display:inline;">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-sm btn-outline-danger ms-1" onclick="return confirm('Desativar motorista?')">Desativar</button>
+                    </form>
+                }
+                else
+                {
+                    <form asp-action="Activate" asp-route-id="@m.Id" method="post" style="display:inline;">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-sm btn-outline-success ms-1" onclick="return confirm('Ativar motorista?')">Ativar</button>
+                    </form>
+                }
+            </td>
         </tr>
     }
     </tbody>

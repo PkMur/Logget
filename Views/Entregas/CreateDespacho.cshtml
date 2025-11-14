@@ -1,12 +1,11 @@
 @{
-    ViewData["Title"] = "Novo Despacho";
 }
 
-<h2>Novo Despacho</h2>
+    ViewData["Title"] = "Nova Expedição";
 
 <div class="row">
     <div class="col-md-8">
-        <form id="despachoForm" method="post" asp-action="CreateDespacho">
+    <form id="despachoForm" method="post" asp-action="CreateDespacho">
             @Html.AntiForgeryToken()
 
             <div class="mb-3">
@@ -32,7 +31,7 @@
 
             <div id="hiddenEntregas"></div>
 
-            <button type="submit" class="btn btn-primary">Confirmar Despacho</button>
+            <button type="submit" class="btn btn-primary">Confirmar Expedição</button>
             <a asp-action="Despacho" class="btn btn-secondary ms-2">Cancelar</a>
         </form>
     </div>

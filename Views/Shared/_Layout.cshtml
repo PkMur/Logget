@@ -45,6 +45,7 @@
 
         .logo-section i {
             margin-right: 10px;
+            color: white;
         }
 
         .top-nav {
@@ -208,10 +209,10 @@
 </head>
 <body>
     <header class="main-header">
-        <div class="logo-section">
+        <a asp-controller="Home" asp-action="Index" class="logo-section" style="text-decoration:none;color:inherit;">
             <i class="fas fa-cube"></i>
-            <span>LogGet</span>
-        </div>
+            <span style="color: white;">LogGet</span>
+        </a>
 
         <div class="user-info">
             <button id="userBtn" class="btn" style="background:none;border:none;color:white;padding:0;display:flex;align-items:center;gap:8px;">
@@ -223,8 +224,8 @@
 
     <aside class="main-sidebar">
         <div class="sidebar-search">
-            <form method="get" asp-controller="Entregas" asp-action="Index" style="display:flex; gap:6px;">
-                <input type="text" name="q" placeholder="Número da entrega" />
+            <form method="get" asp-controller="Entregas" asp-action="Details" style="display:flex; gap:6px;">
+                <input type="text" name="numero" placeholder="Número da entrega" />
                 <button type="submit" style="display:none"></button>
             </form>
         </div>
@@ -253,7 +254,7 @@
                     <li>
                         <a asp-controller="Entregas" asp-action="Despacho">
                             <i class="fas fa-shipping-fast"></i>
-                            <span>Despacho</span>
+                            <span>Expedição</span>
                         </a>
                     </li>
                 </ul>

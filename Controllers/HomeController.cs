@@ -27,15 +27,15 @@ public class HomeController : Controller
     {
         var entregas = _entregaService.ListAll();
         var semMotorista = _entregaService.ListWithoutMotorista();
-        var motoristas = _motoristaService.ListAll();
-        var usuarios = _usuarioService.ListAll();
+        var emRota = entregas.Count(e => e.Status == "Em rota");
+        var finalizadas = entregas.Count(e => e.Status == "Entregue");
 
         var model = new HomeDashboardViewModel
         {
             TotalEntregas = entregas.Count(),
             EntregasSemMotorista = semMotorista.Count(),
-            TotalMotoristas = motoristas.Count(),
-            TotalUsuarios = usuarios.Count()
+            EntregasEmRota = emRota,
+            EntregasFinalizadas = finalizadas
         };
 
         return View(model);

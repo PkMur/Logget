@@ -20,6 +20,7 @@
             <th>Remetente</th>
             <th>Destinatário</th>
             <th>Data de Criação</th>
+            <th>Ações</th>
         </tr>
     </thead>
     <tbody>
@@ -39,6 +40,11 @@
             <td>@(string.IsNullOrWhiteSpace(e.RemetenteNome) ? "-" : e.RemetenteNome)</td>
             <td>@(string.IsNullOrWhiteSpace(e.DestinatarioNome) ? "-" : e.DestinatarioNome)</td>
             <td>@e.CriadoEm.ToLocalTime().ToString("g")</td>
+            <td>
+                <a asp-action="Edit" asp-route-numero="@e.NumeroPedido" class="btn btn-sm btn-outline-primary" title="Editar">
+                    <i class="fas fa-edit"></i>
+                </a>
+            </td>
         </tr>
     }
     </tbody>

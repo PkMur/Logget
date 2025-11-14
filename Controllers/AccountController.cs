@@ -83,7 +83,7 @@ public class AccountController : Controller
     {
         var claims = new List<Claim>
         {
-            new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+            new(JwtRegisteredClaimNames.Sub, user.Id),
             new(JwtRegisteredClaimNames.UniqueName, user.Login),
             new(ClaimTypes.Name, user.Name)
         };

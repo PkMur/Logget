@@ -1,10 +1,10 @@
 @model IEnumerable<LogGet.Models.Entrega>
 
 @{
-    ViewData["Title"] = "Despacho";
+    ViewData["Title"] = "Expedição";
 }
 
-<h2>Despacho</h2>
+<h2>Expedição</h2>
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <form method="get" class="d-flex" action="@Url.Action("Despacho")">
@@ -12,7 +12,7 @@
         <button type="submit" class="btn btn-primary ms-2">Buscar</button>
     </form>
 
-    <a asp-action="CreateDespacho" class="btn btn-success">Novo Despacho</a>
+    <a asp-action="CreateDespacho" class="btn btn-success">Nova Expedição</a>
     </div>
 
 <table class="table table-striped">
